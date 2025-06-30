@@ -27,6 +27,9 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y asciinema
+
+    - name: Build
+      run: npm run build
     
     - name: Validate demos
-      run: npx @deepguide-ai/dg validate
+      run: node dist/index.js validate

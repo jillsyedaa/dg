@@ -1,6 +1,6 @@
 {
   "name": "@deepguide-ai/dg",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "type": "module",
   "description": "Self-testing CLI documentation tool that generates interactive terminal demos",
   "license": "MIT",
@@ -42,15 +42,6 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "pkg": {
-    "targets": [
-      "node18-linux-x64",
-      "node18-macos-x64",
-      "node18-macos-arm64",
-      "node18-win-x64"
-    ],
-    "outputPath": "dist"
   },
   "keywords": [
     "cli",
