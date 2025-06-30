@@ -107,7 +107,7 @@ node dist/index.js    # Test built CLI
 
 - 🐛 **[Issues](https://github.com/deepguide/dg/issues)** - Bug reports and feature requests
 - 💬 **[Discussions](https://github.com/deepguide/dg/discussions)** - Questions and community
-- 📧 **[Email](mailto:support@deepguide.dev)** - Direct support
+- 📧 **[Email](mailto:support@deepguide.ai)** - Direct support
 
 ## Credits
 
