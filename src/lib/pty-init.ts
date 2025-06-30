@@ -1,4 +1,4 @@
-import { downloadPTYBinary, getPTYPath } from './pty.js';
+import { checkPTYAvailability } from './pty.js';
 import { dgLogger as logger } from './logger.js';
 
 let isInitialized = false;
@@ -8,21 +8,15 @@ export async function ensurePTYAvailable(): Promise<boolean> {
     return true;
   }
 
-  let ptyPath = getPTYPath();
+  const isAvailable = await checkPTYAvailability();
   
-  if (!ptyPath) {
-    logger.debug('PTY library not found, attempting to download...');
-    ptyPath = await downloadPTYBinary();
-    
-    if (!ptyPath) {
-      logger.error('Failed to download PTY library');
-      return false;
-    }
+  if (!isAvailable) {
+    logger.error('node-pty is not available. Please install it: npm install node-pty');
+    return false;
   }
   
-  // Set the environment variable for bun-pty
-  process.env.BUN_PTY_LIB = ptyPath;
   isInitialized = true;
+  logger.debug('node-pty is available and ready');
   
   return true;
 } 

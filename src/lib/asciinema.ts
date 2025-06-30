@@ -233,11 +233,11 @@ export async function recordInteractiveDemo(
       '--env', 'COLUMNS,LINES,TERM,LANG,LC_ALL,PS1,RPROMPT,RPS1,ZLE_RPROMPT_INDENT'
     ];
     
-    // Dynamically import bun-pty
-    const { spawn } = await import('bun-pty');
+    // Import node-pty
+    const pty = await import('node-pty');
     
     // Create a PTY instance with proper configuration
-    const pty = spawn(asciinemaPath, args, {
+    const ptyProcess = pty.spawn(asciinemaPath, args, {
       name: 'xterm-256color',
       cols,
       rows,
@@ -251,7 +251,7 @@ export async function recordInteractiveDemo(
     process.stdin.setEncoding('utf8');
 
     // Forward PTY output to stdout
-    pty.onData((data) => {
+    ptyProcess.onData((data) => {
       try {
         process.stdout.write(data.toString());
       } catch (err) {
@@ -274,14 +274,14 @@ export async function recordInteractiveDemo(
         } else {
           currentCommand += str;
         }
-        pty.write(str);
+        ptyProcess.write(str);
       } catch (err) {
         console.error('Error writing to pty:', err);
       }
     });
 
     // Handle terminal session end
-    pty.onExit(() => {
+    ptyProcess.onExit(() => {
       // Clean up terminal state
       process.stdin.setRawMode?.(false);
       process.stdin.pause();
@@ -291,12 +291,12 @@ export async function recordInteractiveDemo(
 
     // Handle Ctrl+C
     process.on('SIGINT', () => {
-      pty.kill();
+      ptyProcess.kill();
     });
 
     // Wait for the process to exit
     return new Promise((resolve) => {
-      pty.onExit(({ exitCode }) => {
+      ptyProcess.onExit(({ exitCode }) => {
         // Clean up
         process.stdin.setRawMode?.(false);
         process.stdin.pause();

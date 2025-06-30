@@ -21,11 +21,15 @@ Transform your CLI documentation from static code blocks or heavy GIF/Video into
 ```bash
 # Install globally
 npm install -g @deepguide-ai/dg
+
+# Or run without installing
+npx @deepguide-ai/dg [command]
 ```
 
-### Standalone Binary
+### Requirements
 
-Download the latest binary for your platform from the [releases page](https://github.com/DeepGuide-Ai/dg/releases).
+- **Node.js 18+** - The CLI runs on Node.js
+- **asciinema** - For recording terminal sessions (auto-installed on first use)
 
 ### Verify Installation
 
@@ -38,8 +42,9 @@ This will check that all dependencies are properly installed.
 **Quick Start** 
 
 ```bash
-dg init                    # Install asciinema if needed
+npx @deepguide-ai/dg init  # 30-second setup
 dg capture                 # Record interactive demo
+dg validate                # Test in CI - PR fails if broken
 ```
 
 
@@ -64,7 +69,7 @@ dg capture                 # Record interactive demo
 **A:** DG re-runs your original commands and compares exit codes + filtered output. Interactive demos are automatically skipped in CI.
 
 ### **Q: What platforms are supported?**
-**A:** macOS (ARM64, x64), Linux (x64 glibc), Windows via WSL2. Platform-specific binaries auto-installed.
+**A:** All platforms supported by Node.js 18+: macOS, Linux, Windows. Requires Node.js runtime.
 
 ### **Q: How big are the generated assets?**
 **A:** SVG demos are typically 50-100x smaller than equivalent GIFs.
@@ -85,16 +90,17 @@ We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md).
 ```bash
 git clone https://github.com/deepguide-ai/dg.git
 cd dg
-bun install
-bun run dev
+npm install
+npm run build
+npm run dev
 ```
 
 ### Testing
 
 ```bash
-bun test              # Unit tests
-bun run test:e2e      # End-to-end tests  
-bun run test:platforms # Cross-platform tests
+npm test              # Unit tests (when available)
+npm run build         # Build TypeScript
+node dist/index.js    # Test built CLI
 ```
 
 ## Support

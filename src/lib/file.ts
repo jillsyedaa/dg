@@ -28,7 +28,8 @@ export async function downloadFile(url: string, targetPath: string): Promise<boo
     
     // Write to file
     const buffer = await response.arrayBuffer();
-    Bun.write(targetPath, buffer);
+    const { writeFile } = await import('fs/promises');
+    await writeFile(targetPath, new Uint8Array(buffer));
     
     return true;
   } catch (error) {

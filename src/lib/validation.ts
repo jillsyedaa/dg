@@ -87,7 +87,7 @@ function normalizeCommand(command: string): string {
   // If it starts with ./ and ends with .js, prefix with bun
   if (command.startsWith('./') && command.endsWith('.js')) {
     const normalized = `bun ${command}`;
-    dgLogger.debug('Normalized command:', command, '->', normalized);
+    dgLogger.debug(`Normalized command: ${command} -> ${normalized}`);
     return normalized;
   }
   dgLogger.debug('Using command as-is:', command);

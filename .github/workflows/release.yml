@@ -26,46 +26,32 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v1
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        bun-version: latest
+        node-version: '20'
+        cache: 'npm'
 
     - name: Install dependencies
-      run: bun install
+      run: npm ci
 
-    - name: Install asciinema (Ubuntu)
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y asciinema
+    - name: Build CLI
+      run: npm run build
 
-    - name: Install asciinema (macOS)
-      if: runner.os == 'macOS'
-      run: brew install asciinema
-
-    - name: Install asciinema (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        # Windows users need to use WSL or alternative, we'll skip for binary
-        echo "Skipping asciinema on Windows build"
-
-    - name: Build Binary
-      run: |
-        # Build the binary for the current platform
-        bun build ./src/index.ts --compile --outfile ${{ matrix.asset_name }}
+    - name: Build Executables
+      run: npm run pkg
 
     - name: Test Binary
       run: |
         # Basic smoke test
-        ./${{ matrix.asset_name }} --version
-        ./${{ matrix.asset_name }} --help
+        node dist/index.js --version
+        node dist/index.js --help
 
     - name: Upload Binary
       uses: actions/upload-artifact@v3
       with:
         name: ${{ matrix.asset_name }}
-        path: ${{ matrix.asset_name }}
+        path: dist/${{ matrix.asset_name }}
 
   release:
     name: Create Release
@@ -80,19 +66,19 @@ jobs:
       id: get_version
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
-    - name: Download all artifacts
+    - name: Download all executables
       uses: actions/download-artifact@v3
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        name: Release ${{ steps.get_version.outputs.VERSION }}
+        files: |
+          dg-linux/dg-linux
+          dg-macos/dg-macos
+          dg-windows/dg-windows.exe
         draft: false
         prerelease: false
-        files: |
-          dg-linux
-          dg-macos
-          dg-windows.exe
+
         body: |
           ## DeepGuide CLI ${{ steps.get_version.outputs.VERSION }}
 
@@ -109,4 +95,4 @@ jobs:
           ### Dependencies
           - asciinema (required for recording demos)
 
-          For full installation instructions, see the [documentation](https://github.com/deepguide/dg/blob/main/README.md). 
+          For full installation instructions, see the [documentation](https://github.com/deepguide-ai/dg/blob/main/README.md). 

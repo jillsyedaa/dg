@@ -7,7 +7,6 @@ const DEFAULT_CONFIG: Omit<Config, 'casts'> = {
   version: '0.1.0',
   project: '',
   outputDir: '.dg',
-  created: new Date().toISOString(),
   updated: new Date().toISOString()
 };
 

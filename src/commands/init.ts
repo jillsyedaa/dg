@@ -1,6 +1,6 @@
 import * as p from '@clack/prompts';
 import { checkAsciinemaAvailability, downloadAsciinema } from '../lib/asciinema.js';
-import { downloadPTYBinary, getPTYPath } from '../lib/pty.js';
+import { checkPTYAvailability } from '../lib/pty.js';
 import {
   configExists,
   createConfig,
@@ -50,7 +50,8 @@ async function createGitHubWorkflow(): Promise<boolean> {
     await ensureDirectoryExists(workflowDir);
     
     const workflowPath = join(workflowDir, 'dg-validate.yml');
-    await Bun.write(workflowPath, GITHUB_WORKFLOW);
+    const { writeFile } = await import('fs/promises');
+    await writeFile(workflowPath, GITHUB_WORKFLOW, 'utf8');
     
     return true;
   } catch (error) {
@@ -125,46 +126,22 @@ export async function initCommand(): Promise<void> {
   
   // Check PTY library
   spinner.start('Checking PTY library...');
-  const ptyPath = getPTYPath();
+  const ptyAvailable = await checkPTYAvailability();
   
-  if (ptyPath) {
+  if (ptyAvailable) {
     spinner.stop('✅ PTY library found');
   } else {
-    spinner.stop('⚠️  PTY library not found');
+    spinner.stop('⚠️  PTY library (node-pty) not found');
+    p.note('node-pty is required for interactive recording. Install it with: npm install node-pty', '⚠️');
     
-    const shouldDownload = await p.confirm({
-      message: 'Would you like me to download the PTY library for you?',
+    const shouldContinue = await p.confirm({
+      message: 'Continue anyway? (You can install node-pty later)',
       initialValue: true
     });
     
-    if (shouldDownload) {
-      spinner.start('Downloading PTY library...');
-      const binaryPath = await downloadPTYBinary();
-      
-      if (binaryPath) {
-        spinner.stop('✅ Downloaded PTY library successfully');
-      } else {
-        spinner.stop('❌ Failed to download PTY library');
-        const shouldContinue = await p.confirm({
-          message: 'Continue anyway? (You can install it later)',
-          initialValue: true
-        });
-        
-        if (!shouldContinue) {
-          p.cancel('Initialization cancelled.');
-          return;
-        }
-      }
-    } else {
-      const shouldContinue = await p.confirm({
-        message: 'Continue anyway? (You can install it later)',
-        initialValue: true
-      });
-      
-      if (!shouldContinue) {
-        p.cancel('Initialization cancelled.');
-        return;
-      }
+    if (!shouldContinue) {
+      p.cancel('Initialization cancelled.');
+      return;
     }
   }
   

@@ -23,7 +23,7 @@ fi
 
 # Build the project
 echo -e "${YELLOW}Building project...${NC}"
-bun run build
+npm run build
 if [ $? -ne 0 ]; then
     echo -e "${RED}Build failed${NC}"
     exit 1
@@ -32,7 +32,7 @@ fi
 # Run tests if they exist
 if grep -q "\"test\":" package.json; then
     echo -e "${YELLOW}Running tests...${NC}"
-    bun run test
+    npm test
     if [ $? -ne 0 ]; then
         echo -e "${RED}Tests failed${NC}"
         exit 1

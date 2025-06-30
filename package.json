@@ -17,36 +17,45 @@
     "scripts"
   ],
   "scripts": {
-    "build": "bun build src/index.ts --outdir dist --target node",
-    "build:exe": "bun run build:exe:all",
-    "build:exe:all": "bun run build:exe:darwin-arm64 && bun run build:exe:darwin-x64 && bun run build:exe:linux-x64",
-    "build:exe:darwin-arm64": "mkdir -p dist && bun build --compile --minify --target=bun-darwin-arm64 src/index.ts --outfile dist/dg-darwin-arm64 --define DG_VERSION=\\\"$npm_package_version\\\"",
-    "build:exe:darwin-x64": "mkdir -p dist && bun build --compile --minify --target=bun-darwin-x64 src/index.ts --outfile dist/dg-darwin-x64 --define DG_VERSION=\\\"$npm_package_version\\\"",
-    "build:exe:linux-x64": "mkdir -p dist && bun build --compile --minify --target=bun-linux-x64 src/index.ts --outfile dist/dg-linux-x64 --define DG_VERSION=\\\"$npm_package_version\\\"",
-    "dev": "bun run src/index.ts",
-    "prepublishOnly": "bun run build",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist",
+    "dev": "ts-node-esm src/index.ts",
+    "prepublishOnly": "npm run clean && npm run build",
     "postinstall": "node scripts/postinstall.js",
-    "release": "bun run build && npm version patch && git push --follow-tags",
-    "release:minor": "bun run build && npm version minor && git push --follow-tags",
-    "release:major": "bun run build && npm version major && git push --follow-tags",
+    "release": "npm run build && npm version patch && git push --follow-tags",
+    "release:minor": "npm run build && npm version minor && git push --follow-tags",
+    "release:major": "npm run build && npm version major && git push --follow-tags",
     "publish:public": "./scripts/publish-public.sh",
     "publish:public:minor": "./scripts/publish-public.sh minor",
-    "publish:public:major": "./scripts/publish-public.sh major"
+    "publish:public:major": "./scripts/publish-public.sh major",
+    "pkg": "pkg ."
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
-    "bun-pty": "^0.3.2",
     "commander": "^14.0.0",
+    "node-pty": "^1.0.0",
     "winston": "^3.17.0",
     "zod": "^3.25.67"
   },
   "devDependencies": {
     "@types/node": "^24.0.7",
+    "pkg": "^5.8.1",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "bun": ">=1.0.0"
+    "node": ">=18.0.0"
+  },
+  "pkg": {
+    "targets": [
+      "node18-linux-x64",
+      "node18-macos-x64",
+      "node18-macos-arm64",
+      "node18-win-x64"
+    ],
+    "outputPath": "dist"
   },
   "keywords": [
     "cli",
