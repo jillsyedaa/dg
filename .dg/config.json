@@ -3,7 +3,7 @@
   "project": "DG",
   "outputDir": ".dg",
   "created": "2025-06-30T09:25:39.529Z",
-  "updated": "2025-06-30T12:54:31.728Z",
+  "updated": "2025-06-30T13:05:20.468Z",
   "casts": [
     {
       "name": "capture",
@@ -14,8 +14,8 @@
       "validation": {
         "mode": "auto"
       },
-      "command": "Test Capture",
-      "validated": "2025-06-30T12:54:31.728Z"
+      "command": "node dist/index.js --help",
+      "validated": "2025-06-30T13:05:20.468Z"
     }
   ]
 }
