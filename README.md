@@ -14,14 +14,6 @@ Transform your CLI documentation from static code blocks or heavy GIF/Video into
 ![Capture - dark](/.dg/svg/capture-dark.svg#gh-dark-mode-only)
 
 
-**Quick Start** 
-
-```bash
-npx @deepguide-ai/dg init  # 30-second setup
-dg capture                 # Record interactive demo
-dg validate                # Test in CI - PR fails if broken
-```
-
 ## Installation
 
 ### Via npm (recommended)
@@ -29,9 +21,6 @@ dg validate                # Test in CI - PR fails if broken
 ```bash
 # Install globally
 npm install -g @deepguide-ai/dg
-
-# Or run without installing
-npx @deepguide-ai/dg [command]
 ```
 
 ### Standalone Binary
@@ -45,6 +34,13 @@ dg doctor
 ```
 
 This will check that all dependencies are properly installed.
+
+**Quick Start** 
+
+```bash
+dg init                    # Install asciinema if needed
+dg capture                 # Record interactive demo
+```
 
 
 ## Core Commands
