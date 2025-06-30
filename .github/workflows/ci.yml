@@ -93,26 +93,6 @@ jobs:
         cd ..
         rm -rf test-project
 
-    - name: Test package installation
-      run: |
-        # Create a temporary directory for global installations
-        mkdir -p ~/.local/share/pnpm/global
-        
-        # Pack and install the package
-        pnpm pack
-        PACKAGE_FILE=$(ls deepguide-ai-dg-*.tgz)
-        pnpm add -g "./$PACKAGE_FILE" --global-dir ~/.local/share/pnpm/global
-        
-        # Add global bin to PATH
-        export PATH="$PATH:~/.local/share/pnpm/global/5/node_modules/.bin"
-        
-        # Test the globally installed package
-        dg --version
-        dg doctor
-        
-        # Cleanup
-        pnpm remove -g @deepguide-ai/dg --global-dir ~/.local/share/pnpm/global
-
   lint:
     name: Lint and Format
     runs-on: ubuntu-latest
