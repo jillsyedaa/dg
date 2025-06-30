@@ -109,6 +109,16 @@ node dist/index.js    # Test built CLI
 - 💬 **[Discussions](https://github.com/deepguide/dg/discussions)** - Questions and community
 - 📧 **[Email](mailto:support@deepguide.dev)** - Direct support
 
+## Credits
+
+DeepGuide CLI builds upon these amazing open source projects:
+
+- **[asciinema](https://github.com/asciinema/asciinema)** - The core terminal session recorder that powers our demo capture. GPL-3.0 licensed.
+- **[node-pty](https://github.com/microsoft/node-pty)** - Pseudoterminal implementation that enables cross-platform terminal recording. MIT licensed.
+- **[termsvg](https://github.com/MrMarble/termsvg)** - Terminal session to SVG renderer that creates our lightweight, beautiful demo outputs. MIT licensed.
+
+Special thanks to the maintainers and contributors of these projects! ❤️
+
 ## License
 
 **MIT** - The main CLI tool is MIT licensed for maximum compatibility.
