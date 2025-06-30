@@ -25,10 +25,11 @@
     "prepublishOnly": "npm run clean && npm run build",
     "postinstall": "node scripts/postinstall.js || true",
     "version": "git add -A",
-    "postversion": "git push && git push --tags",
-    "release": "pnpm run build && pnpm version patch -m \"Release v%s\" && git tag -f \"v$(pnpm pkg get version | tr -d '\"')\" && git push --follow-tags",
-    "release:minor": "pnpm run build && pnpm version minor -m \"Release v%s\" && git tag -f \"v$(pnpm pkg get version | tr -d '\"')\" && git push --follow-tags",
-    "release:major": "pnpm run build && pnpm version major -m \"Release v%s\" && git tag -f \"v$(pnpm pkg get version | tr -d '\"')\" && git push --follow-tags"
+    "postversion": "git push && git push --tags --force",
+    "prerelease": "git fetch --tags",
+    "release": "pnpm run build && pnpm version patch -m \"Release v%s\" && git tag -f \"v$(pnpm pkg get version | tr -d '\"')\" && git push --follow-tags --force-with-lease",
+    "release:minor": "pnpm run build && pnpm version minor -m \"Release v%s\" && git tag -f \"v$(pnpm pkg get version | tr -d '\"')\" && git push --follow-tags --force-with-lease",
+    "release:major": "pnpm run build && pnpm version major -m \"Release v%s\" && git tag -f \"v$(pnpm pkg get version | tr -d '\"')\" && git push --follow-tags --force-with-lease"
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
