@@ -21,12 +21,14 @@
     "build:watch": "tsc --watch",
     "clean": "rimraf dist",
     "dev": "NODE_OPTIONS=\"--loader ts-node/esm\" ts-node-esm src/index.ts",
-    "prepare": "npm run build",
+    "prepare": "if [ \"$CI\" != \"true\" ]; then npm run build; fi",
     "prepublishOnly": "npm run clean && npm run build",
-    "postinstall": "node scripts/postinstall.js",
-    "release": "npm run build && npm version patch && git push --follow-tags",
-    "release:minor": "npm run build && npm version minor && git push --follow-tags",
-    "release:major": "npm run build && npm version major && git push --follow-tags"
+    "postinstall": "node scripts/postinstall.js || true",
+    "version": "git add -A",
+    "postversion": "git push && git push --tags",
+    "release": "pnpm run build && pnpm version patch -m \"Release v%s\" && git tag -f \"v$(pnpm pkg get version | tr -d '\"')\" && git push --follow-tags",
+    "release:minor": "pnpm run build && pnpm version minor -m \"Release v%s\" && git tag -f \"v$(pnpm pkg get version | tr -d '\"')\" && git push --follow-tags",
+    "release:major": "pnpm run build && pnpm version major -m \"Release v%s\" && git tag -f \"v$(pnpm pkg get version | tr -d '\"')\" && git push --follow-tags"
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
