@@ -1,8 +1,21 @@
 {
   "version": "0.1.0",
-  "project": "dg",
+  "project": "DG",
   "outputDir": ".dg",
-  "updated": "2025-06-30T12:10:31.737Z",
+  "created": "2025-06-30T09:25:39.529Z",
+  "updated": "2025-06-30T12:54:31.728Z",
   "casts": [
+    {
+      "name": "capture",
+      "title": "Capture",
+      "created": "2025-06-30T09:28:42.067Z",
+      "updated": "2025-06-30T09:28:42.067Z",
+      "interactive": false,
+      "validation": {
+        "mode": "auto"
+      },
+      "command": "Test Capture",
+      "validated": "2025-06-30T12:54:31.728Z"
+    }
   ]
 }
