@@ -26,10 +26,6 @@ case "$(uname -s)" in
             x86_64) ARCH="x64" ;;
         esac
         ;;
-    MINGW*|MSYS*|CYGWIN*) 
-        PLATFORM="windows"
-        ARCH="x64"
-        ;;
 esac
 
 if [ "$PLATFORM" = "unknown" ] || [ "$ARCH" = "unknown" ]; then

@@ -25,11 +25,7 @@
     "postinstall": "node scripts/postinstall.js",
     "release": "npm run build && npm version patch && git push --follow-tags",
     "release:minor": "npm run build && npm version minor && git push --follow-tags",
-    "release:major": "npm run build && npm version major && git push --follow-tags",
-    "publish:public": "./scripts/publish-public.sh",
-    "publish:public:minor": "./scripts/publish-public.sh minor",
-    "publish:public:major": "./scripts/publish-public.sh major",
-    "pkg": "pkg ."
+    "release:major": "npm run build && npm version major && git push --follow-tags"
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
@@ -40,7 +36,6 @@
   },
   "devDependencies": {
     "@types/node": "^24.0.7",
-    "pkg": "^5.8.1",
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"

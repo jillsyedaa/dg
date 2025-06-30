@@ -6,23 +6,9 @@ on:
       - 'v*' # Trigger on version tags
 
 jobs:
-  build:
-    name: Build Release
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        include:
-          - os: ubuntu-latest
-            platform: linux
-            asset_name: dg-linux
-          - os: macos-latest
-            platform: macos
-            asset_name: dg-macos
-          - os: windows-latest
-            platform: windows
-            asset_name: dg-windows.exe
-
+  release:
+    name: Release to npm
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
 
@@ -30,69 +16,49 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
+        registry-url: 'https://registry.npmjs.org'
         cache: 'npm'
 
     - name: Install dependencies
       run: npm ci
 
-    - name: Build CLI
+    - name: Build
       run: npm run build
 
-    - name: Build Executables
-      run: npm run pkg
-
-    - name: Test Binary
+    - name: Test
       run: |
-        # Basic smoke test
         node dist/index.js --version
         node dist/index.js --help
-
-    - name: Upload Binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.asset_name }}
-        path: dist/${{ matrix.asset_name }}
-
-  release:
-    name: Create Release
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-    - uses: actions/checkout@v4
 
     - name: Get version from tag
       id: get_version
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
-    - name: Download all executables
-      uses: actions/download-artifact@v4
-
-    - name: Create Release
+    - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       with:
-        files: |
-          dg-linux/dg-linux
-          dg-macos/dg-macos
-          dg-windows/dg-windows.exe
         draft: false
         prerelease: false
-
         body: |
           ## DeepGuide CLI ${{ steps.get_version.outputs.VERSION }}
 
           ### Installation
-          1. Download the appropriate binary for your platform
-          2. Make it executable (Linux/macOS): `chmod +x dg-*`
-          3. Move it to your PATH: `sudo mv dg-* /usr/local/bin/dg`
+          ```bash
+          npm install -g @deepguide-ai/dg
+          ```
 
-          ### Supported Platforms
-          - Linux (x64)
-          - macOS (x64, arm64)
-          - Windows (x64)
+          Or run directly with:
+          ```bash
+          npx @deepguide-ai/dg
+          ```
 
           ### Dependencies
+          - Node.js >= 18
           - asciinema (required for recording demos)
 
-          For full installation instructions, see the [documentation](https://github.com/deepguide-ai/dg/blob/main/README.md). 
+          For full installation instructions, see the [documentation](https://github.com/deepguide-ai/dg/blob/main/README.md).
+
+    - name: Publish to npm
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} 
