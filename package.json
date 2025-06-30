@@ -13,9 +13,8 @@
     "dist",
     "README.md",
     "LICENSE",
-    "!dist/*.exe",
-    "!dist/dg-*",
-    "install.sh"
+    "install.sh",
+    "scripts"
   ],
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target node",
