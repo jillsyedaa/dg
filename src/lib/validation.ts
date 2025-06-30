@@ -84,9 +84,9 @@ function extractCommandFromCast(cast: CastConfig): string | undefined {
 }
 
 function normalizeCommand(command: string): string {
-  // If it starts with ./ and ends with .js, prefix with bun
+  // If it starts with ./ and ends with .js, prefix with node
   if (command.startsWith('./') && command.endsWith('.js')) {
-    const normalized = `bun ${command}`;
+    const normalized = `node ${command}`;
     dgLogger.debug(`Normalized command: ${command} -> ${normalized}`);
     return normalized;
   }

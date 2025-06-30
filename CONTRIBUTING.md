@@ -49,12 +49,12 @@ git clone https://github.com/your-username/dg.git
 cd dg
 
 # Install dependencies
-bun install
+pnpm install
 
 # Run in development mode
-bun run dev init
-bun run dev capture
-bun run dev validate
+pnpm run dev init
+pnpm run dev capture
+pnpm run dev validate
 ```
 
 ### Testing Your Changes
@@ -62,15 +62,15 @@ bun run dev validate
 #### Manual Testing
 ```bash
 # Test all commands work
-bun run dev init
-bun run dev capture
-bun run dev validate
-bun run dev list
-bun run dev doctor
+pnpm run dev init
+pnpm run dev capture
+pnpm run dev validate
+pnpm run dev list
+pnpm run dev doctor
 
 # Test edge cases
-bun run dev capture  # Try interactive commands
-bun run dev validate # Test with failing commands
+pnpm run dev capture  # Try interactive commands
+pnpm run dev validate # Test with failing commands
 ```
 
 ## Coding Standards

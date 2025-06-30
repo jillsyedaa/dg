@@ -18,13 +18,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v1
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        bun-version: latest
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
 
     - name: Install dependencies
-      run: bun install
+      run: npm ci
 
     - name: Install asciinema (Ubuntu)
       if: runner.os == 'Linux'
@@ -40,7 +41,7 @@ jobs:
       run: asciinema --version
 
     - name: Build
-      run: bun run build
+      run: npm run build
 
     - name: Test CLI commands
       run: |
@@ -59,7 +60,7 @@ jobs:
 
     - name: Test TypeScript compilation
       run: |
-        bun run build
+        npm run build
         # Verify all TypeScript files compile without errors
 
   lint:
@@ -69,14 +70,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v1
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
       
     - name: Install dependencies
-      run: bun install
+      run: npm ci
       
     - name: Check TypeScript
-      run: bun run build
+      run: npm run build
 
   security:
     name: Security Audit
@@ -85,11 +89,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v1
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
       
     - name: Install dependencies
-      run: bun install
+      run: npm ci
       
     - name: Audit dependencies
-      run: bun audit
+      run: npm audit
