@@ -37,13 +37,11 @@ jobs:
     - name: Install dependencies
       run: pnpm install --no-frozen-lockfile
       
-    - name: Install asciinema
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y asciinema
-
     - name: Build
       run: pnpm run build
-    
+
+    - name: Initialize DeepGuide
+      run: node dist/index.js init --yes
+
     - name: Validate demos
-      run: node dist/index.js validate
+      run: node dist/index.js validate --non-interactive

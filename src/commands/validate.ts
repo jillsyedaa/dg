@@ -3,34 +3,44 @@ import { readConfig, getAllCasts, updateCast } from '../lib/config.js';
 import { validateDemo, validateTerminalDimensions } from '../lib/validation.js';
 import type { CastConfig, ValidationResult } from '../types.js';
 
-export async function validateCommand(name?: string, options?: any): Promise<void> {
-  console.clear();
-
-  p.intro('✅ Validate CLI demos');
+export async function validateCommand(name?: string, options: { nonInteractive?: boolean } = {}): Promise<void> {
+  if (!options.nonInteractive) {
+    console.clear();
+    p.intro('✅ Validate CLI demos');
+  }
 
   // Check if DG is initialized
   const config = readConfig();
   if (!config) {
+    if (options.nonInteractive) {
+      console.error('No config found. Run `dg init` first.');
+      process.exit(1);
+    }
     p.cancel('No config found. Run `dg init` first.');
     return;
   }
 
   const casts = getAllCasts();
   if (casts.length === 0) {
+    if (options.nonInteractive) {
+      console.error('No demos found. Run `dg capture` to record your first demo.');
+      process.exit(1);
+    }
     p.cancel('No demos found. Run `dg capture` to record your first demo.');
     return;
   }
 
   // Validate terminal dimensions
-  const spinner = p.spinner();
-  spinner.start('Checking environment...');
-
-  const dimensionsOK = await validateTerminalDimensions();
-
-  if (dimensionsOK) {
-    spinner.stop('✅ Terminal dimensions optimal');
-  } else {
-    spinner.stop('⚠️  Non-standard terminal dimensions detected');
+  let dimensionsOK = true;
+  if (!options.nonInteractive) {
+    const spinner = p.spinner();
+    spinner.start('Checking environment...');
+    dimensionsOK = await validateTerminalDimensions();
+    if (dimensionsOK) {
+      spinner.stop('✅ Terminal dimensions optimal');
+    } else {
+      spinner.stop('⚠️  Non-standard terminal dimensions detected');
+    }
   }
 
   // Select demos to validate
@@ -40,15 +50,21 @@ export async function validateCommand(name?: string, options?: any): Promise<voi
     // Validate specific demo
     const cast = casts.find(c => c.name === name);
     if (!cast) {
-      p.cancel(`Demo '${name}' not found. Available demos: ${casts.map(c => c.name).join(', ')}`);
+      const message = `Demo '${name}' not found. Available demos: ${casts.map(c => c.name).join(', ')}`;
+      if (options.nonInteractive) {
+        console.error(message);
+        process.exit(1);
+      }
+      p.cancel(message);
       return;
     }
     selectedCasts = [cast];
   } else {
-    // Validate all or selected demos
-    if (casts.length === 1) {
+    // In non-interactive mode, validate all demos
+    if (options.nonInteractive || casts.length === 1) {
       selectedCasts = casts;
     } else {
+      // Interactive mode - let user select demos
       const selection = await p.multiselect({
         message: 'Which demos would you like to validate?',
         options: [
@@ -75,6 +91,10 @@ export async function validateCommand(name?: string, options?: any): Promise<voi
   }
 
   if (selectedCasts.length === 0) {
+    if (options.nonInteractive) {
+      console.error('No demos selected for validation.');
+      process.exit(1);
+    }
     p.cancel('No demos selected for validation.');
     return;
   }
@@ -83,8 +103,12 @@ export async function validateCommand(name?: string, options?: any): Promise<voi
   const results: Array<{ cast: CastConfig; result: ValidationResult }> = [];
 
   for (const cast of selectedCasts) {
-    const valSpinner = p.spinner();
-    valSpinner.start(`Validating ${cast.title || cast.name}...`);
+    if (options.nonInteractive) {
+      console.log(`Validating ${cast.title || cast.name}...`);
+    } else {
+      const valSpinner = p.spinner();
+      valSpinner.start(`Validating ${cast.title || cast.name}...`);
+    }
 
     try {
       const result = await validateDemo(cast);
@@ -101,11 +125,22 @@ export async function validateCommand(name?: string, options?: any): Promise<voi
 
       const icon = result.status === 'passed' ? '✅' :
         result.status === 'skipped' ? '⏭️' : '❌';
-      valSpinner.stop(`${icon} ${cast.title || cast.name} - ${result.status}`);
+      
+      if (options.nonInteractive) {
+        console.log(`${icon} ${cast.title || cast.name} - ${result.status}`);
+      } else {
+        const valSpinner = p.spinner();
+        valSpinner.stop(`${icon} ${cast.title || cast.name} - ${result.status}`);
+      }
 
     } catch (error) {
       console.error('Validation error:', error);
-      valSpinner.stop(`❌ ${cast.title || cast.name} - validation error`);
+      if (options.nonInteractive) {
+        console.log(`❌ ${cast.title || cast.name} - validation error`);
+      } else {
+        const valSpinner = p.spinner();
+        valSpinner.stop(`❌ ${cast.title || cast.name} - validation error`);
+      }
       results.push({
         cast,
         result: {
@@ -152,15 +187,19 @@ export async function validateCommand(name?: string, options?: any): Promise<voi
   const summary = `${passed.length} passed, ${skipped.length} skipped, ${failed.length} failed (${total} total)`;
 
   if (failed.length === 0) {
-    p.note(
-      `${summary}`,
-      '🎉 All validations successful!'
-    );
+    if (options.nonInteractive) {
+      console.log('🎉 All validations successful!');
+      console.log(summary);
+    } else {
+      p.note(summary, '🎉 All validations successful!');
+    }
   } else {
-    p.note(
-      `${summary}`,
-      `❌ ${failed.length} validation(s) failed`
-    );
+    if (options.nonInteractive) {
+      console.log(`❌ ${failed.length} validation(s) failed`);
+      console.log(summary);
+    } else {
+      p.note(summary, `❌ ${failed.length} validation(s) failed`);
+    }
   }
 
   // Exit with error code if validations failed (for CI)

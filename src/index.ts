@@ -46,6 +46,7 @@ program
   .description('Validate recorded demos')
   .option('-v, --verbose', 'Enable verbose logging')
   .option('--dev', 'Enable development mode')
+  .option('--non-interactive', 'Run in non-interactive mode (for CI environments)')
   .action(async (name, options) => {
     // Ensure PTY is available before running validate
     if (await ensurePTYAvailable()) {

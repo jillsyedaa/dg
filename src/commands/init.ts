@@ -41,7 +41,7 @@ jobs:
         sudo apt-get install -y asciinema
     
     - name: Validate demos
-      run: npx @deepguide-ai/dg validate
+      run: npx @deepguide-ai/dg validate --non-interactive
 `;
 
 async function createGitHubWorkflow(): Promise<boolean> {
