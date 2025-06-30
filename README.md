@@ -54,9 +54,8 @@ dg validate                # Test in CI - PR fails if broken
 |---------|---------|---------|
 | **`dg init`** | Interactive setup wizard | `npx @deepguide-ai/dg init` |
 | **`dg capture`** | Record CLI demos | `dg capture` |
-| **`dg generate`** | Create SVG + markdown | `dg generate` |
 | **`dg validate`** | Test demos in CI | `dg validate` |
-| **`dg list`** | Show demo status | `dg list` |
+| **`dg list`** | Show status | `dg list` |
 | **`dg doctor`** | Environment diagnostics | `dg doctor` |
 
 
