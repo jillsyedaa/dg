@@ -43,7 +43,7 @@ jobs:
           ${{ runner.os }}-pnpm-store-
 
     - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      run: pnpm install --no-frozen-lockfile
 
     - name: Install asciinema (Ubuntu)
       if: runner.os == 'Linux'
@@ -115,7 +115,7 @@ jobs:
           ${{ runner.os }}-pnpm-store-
       
     - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      run: pnpm install --no-frozen-lockfile
       
     - name: Check TypeScript
       run: pnpm run build
@@ -152,7 +152,7 @@ jobs:
           ${{ runner.os }}-pnpm-store-
       
     - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      run: pnpm install --no-frozen-lockfile
       
     - name: Audit dependencies
       run: pnpm audit
