@@ -24,7 +24,7 @@ export async function validateCommand(name?: string, options: { nonInteractive?:
   if (casts.length === 0) {
     if (options.nonInteractive) {
       console.error('No demos found. Run `dg capture` to record your first demo.');
-      process.exit(1);
+      process.exit(0);
     }
     p.cancel('No demos found. Run `dg capture` to record your first demo.');
     return;
