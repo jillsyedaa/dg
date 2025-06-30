@@ -9,6 +9,9 @@ jobs:
   release:
     name: Release to npm
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # This allows creating releases
+      id-token: write # This is needed for npm provenance
     steps:
     - uses: actions/checkout@v4
 
