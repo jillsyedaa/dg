@@ -11,7 +11,7 @@ import {
 import { join } from 'path';
 import { ensureDirectoryExists } from '../lib/file.js';
 
-const GITHUB_WORKFLOW = `name: CI
+const GITHUB_WORKFLOW = `name: DeepGuide
 
 on:
   push:
