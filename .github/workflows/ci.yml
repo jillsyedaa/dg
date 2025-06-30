@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node-version: [18, 20]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+
+    - name: Install dependencies
+      run: bun install
+
+    - name: Install asciinema (Ubuntu)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y asciinema
+
+    - name: Install asciinema (macOS)
+      if: runner.os == 'macOS'
+      run: brew install asciinema
+
+    - name: Verify asciinema installation
+      run: asciinema --version
+
+    - name: Build
+      run: bun run build
+
+    - name: Test CLI commands
+      run: |
+        # Test basic CLI functionality
+        node dist/index.js --help
+        node dist/index.js --version
+        
+        # Test init command
+        mkdir -p test-project
+        cd test-project
+        echo "Testing DG CLI" > README.md
+        node ../dist/index.js init --help
+        
+        # Test doctor command
+        node ../dist/index.js doctor
+
+    - name: Test TypeScript compilation
+      run: |
+        bun run build
+        # Verify all TypeScript files compile without errors
+
+  lint:
+    name: Lint and Format
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      
+    - name: Install dependencies
+      run: bun install
+      
+    - name: Check TypeScript
+      run: bun run build
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      
+    - name: Install dependencies
+      run: bun install
+      
+    - name: Audit dependencies
+      run: bun audit

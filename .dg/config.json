@@ -1,0 +1,30 @@
+{
+  "version": "0.1.0",
+  "project": "DG",
+  "outputDir": ".dg",
+  "created": "2025-06-30T09:25:39.529Z",
+  "updated": "2025-06-30T09:28:42.068Z",
+  "casts": [
+    {
+      "name": "test-capture",
+      "title": "Test Capture",
+      "created": "2025-06-30T09:27:34.843Z",
+      "updated": "2025-06-30T09:27:34.843Z",
+      "interactive": false,
+      "validation": {
+        "mode": "auto"
+      }
+    },
+    {
+      "name": "capture",
+      "title": "Capture",
+      "created": "2025-06-30T09:28:42.067Z",
+      "updated": "2025-06-30T09:28:42.067Z",
+      "interactive": false,
+      "validation": {
+        "mode": "auto"
+      },
+      "command": "Test Capture"
+    }
+  ]
+}
