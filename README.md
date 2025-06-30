@@ -20,10 +20,10 @@ Transform your CLI documentation from static code blocks or heavy GIF/Video into
 
 ```bash
 # Install globally
-npm install -g @deepguide-ai/dg
+pnpm add -g @deepguide-ai/dg
 
 # Or run without installing
-npx @deepguide-ai/dg [command]
+pnpm dlx @deepguide-ai/dg [command]
 ```
 
 ### Requirements
@@ -42,7 +42,7 @@ This will check that all dependencies are properly installed.
 **Quick Start** 
 
 ```bash
-npx @deepguide-ai/dg init  # 30-second setup
+pnpm dlx @deepguide-ai/dg init  # 30-second setup
 dg capture                 # Record interactive demo
 dg validate                # Test in CI - PR fails if broken
 ```
@@ -90,16 +90,16 @@ We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md).
 ```bash
 git clone https://github.com/deepguide-ai/dg.git
 cd dg
-npm install
-npm run build
-npm run dev
+pnpm install
+pnpm run build
+pnpm run dev
 ```
 
 ### Testing
 
 ```bash
-npm test              # Unit tests (when available)
-npm run build         # Build TypeScript
+pnpm test              # Unit tests (when available)
+pnpm run build         # Build TypeScript
 node dist/index.js    # Test built CLI
 ```
 
