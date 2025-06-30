@@ -1,6 +1,6 @@
 {
   "name": "@deepguide-ai/dg",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "type": "module",
   "description": "Self-testing CLI documentation tool that generates interactive terminal demos",
   "license": "MIT",
