@@ -28,10 +28,10 @@ dg validate                # Test in CI - PR fails if broken
 
 ```bash
 # Install globally
-npm install -g @DeepGuide-Ai/dg
+npm install -g @deepguide-ai/dg
 
 # Or run without installing
-npx @DeepGuide-Ai/dg [command]
+npx @deepguide-ai/dg [command]
 ```
 
 ### Standalone Binary

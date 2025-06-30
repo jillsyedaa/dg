@@ -67,13 +67,13 @@ async function install() {
     console.log('\nYou can now run \'dg --help\' to get started');
     console.log('Run \'dg doctor\' to verify your installation');
     console.log('To install globally:');
-    console.log('  sudo npm install -g @DeepGuide-Ai/dg');
+    console.log('  sudo npm install -g @deepguide-ai/dg');
 
   } catch (error) {
     console.error('Installation failed:', error.message);
     if (error.code === 'EACCES') {
       console.log('\nTry running with sudo:');
-      console.log('  sudo npm install -g @DeepGuide-Ai/dg');
+      console.log('  sudo npm install -g @deepguide-ai/dg');
     }
     process.exit(1);
   }

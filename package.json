@@ -1,5 +1,5 @@
 {
-  "name": "@DeepGuide-Ai/dg",
+  "name": "@deepguide-ai/dg",
   "version": "2.0.1",
   "type": "module",
   "description": "Self-testing CLI documentation tool that generates interactive terminal demos",
