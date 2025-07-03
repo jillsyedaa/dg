@@ -1,5 +1,6 @@
 import { execSync } from 'child_process';
 import { platform, arch } from 'os';
+import { existsSync } from 'fs';
 import type { PlatformInfo } from '../types.js';
 
 export function getTermSVGInstallCommand(): string {
@@ -7,9 +8,8 @@ export function getTermSVGInstallCommand(): string {
   
   switch (currentPlatform) {
     case 'darwin':
-      return 'curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -';
     case 'linux':
-      return 'curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -';
+      return 'curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -';
     case 'win32':
       return 'Download from: https://github.com/MrMarble/termsvg/releases (Windows recording limited)';
     default:
@@ -24,7 +24,7 @@ export function getTermSVGInstallInstructions(): string[] {
     '📦 Install termsvg for SVG generation:',
     '',
     '🚀 Quick install (recommended):',
-    '   curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -',
+    '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -',
     '',
     '🔧 Alternative methods:'
   ];
@@ -35,16 +35,17 @@ export function getTermSVGInstallInstructions(): string[] {
     case 'darwin':
       platformSpecific.push(
         '   # macOS with install script',
-        '   curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -',
+        '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -',
         '   # Or with Go:',
         '   go install github.com/mrmarble/termsvg/cmd/termsvg@latest'
       );
       break;
     case 'linux':
       platformSpecific.push(
-        '   # Linux with package manager',
-        '   # Ubuntu/Debian: Check for PPA or use install script above',
-        '   # Arch: Check AUR for termsvg'
+        '   # Linux with install script',
+        '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -',
+        '   # Or with Go:',
+        '   go install github.com/mrmarble/termsvg/cmd/termsvg@latest'
       );
       break;
     case 'win32':
@@ -142,14 +143,14 @@ export async function installTermSVGInteractive(): Promise<boolean> {
   try {
     switch (currentPlatform) {
       case 'darwin':
-        console.log('📦 Attempting to install via install script...');
+        console.log('📦 Attempting to install via remote script...');
         try {
-          execSync('curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -', 
+          execSync('curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -', 
             { stdio: 'inherit' });
           console.log('✅ termsvg installed successfully!');
           return true;
         } catch (installError) {
-          console.log('❌ Install script failed');
+          console.log('❌ Remote install script failed');
           console.log('💡 Please install manually:');
           console.log('   # Try Go installation:');
           console.log('   go install github.com/mrmarble/termsvg/cmd/termsvg@latest');
@@ -158,15 +159,18 @@ export async function installTermSVGInteractive(): Promise<boolean> {
         }
         
       case 'linux':
-        console.log('📦 Attempting to install via install script...');
+        console.log('📦 Attempting to install via remote script...');
         try {
-          execSync('curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -', 
+          execSync('curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -', 
             { stdio: 'inherit' });
           console.log('✅ termsvg installed successfully!');
           return true;
         } catch (installError) {
-          console.log('❌ Install script failed');
-          console.log('💡 Please install manually or check your internet connection');
+          console.log('❌ Remote install script failed');
+          console.log('💡 Please install manually:');
+          console.log('   # Try Go installation:');
+          console.log('   go install github.com/mrmarble/termsvg/cmd/termsvg@latest');
+          console.log('   # Or download from: https://github.com/MrMarble/termsvg/releases');
           return false;
         }
         
