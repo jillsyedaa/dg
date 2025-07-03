@@ -70,6 +70,8 @@ program
 program
   .command('doctor')
   .description('Check system for potential problems')
+  .option('-v, --verbose', 'Enable verbose logging')
+  .option('--fix', 'Attempt automatic fixes for detected issues')
   .action(doctorCommand);
 
 program.parse(); 

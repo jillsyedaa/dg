@@ -2,7 +2,7 @@ import * as p from '@clack/prompts';
 import { execSync, exec } from 'child_process';
 import { existsSync, statSync } from 'fs';
 import { join } from 'path';
-import { checkAsciinemaAvailability, getAsciinemaCompatibility } from '../lib/asciinema.js';
+import { checkAsciinemaAvailability, getAsciinemaCompatibility, installAsciinemaInteractive } from '../lib/asciinema.js';
 import { checkTermSVGAvailability, installTermSVGInteractive } from '../lib/termsvg.js';
 import { readConfig, configExists } from '../lib/config.js';
 import type { EnvironmentDiagnostics, DiagnosticResult } from '../types.js';
@@ -214,6 +214,31 @@ function displayDiagnostics(diagnostics: EnvironmentDiagnostics, verbose: boolea
 async function autoFix(diagnostics: EnvironmentDiagnostics): Promise<void> {
   const fixes: string[] = [];
   
+  // Auto-fix asciinema installation
+  if (diagnostics.asciinema.status === 'error') {
+    console.log('\n🔧 Attempting to install asciinema...');
+    
+    // Try system package manager first
+    const installed = await installAsciinemaInteractive();
+    if (installed) {
+      fixes.push('✅ asciinema installed via package manager');
+    } else {
+      // Fallback to bundled binary download
+      try {
+        const { downloadAsciinema } = await import('../lib/asciinema.js');
+        const binaryPath = await downloadAsciinema();
+        if (binaryPath) {
+          fixes.push('✅ asciinema downloaded successfully');
+        } else {
+          fixes.push('❌ asciinema installation failed - manual installation required');
+        }
+      } catch (error) {
+        console.log('❌ asciinema download failed:', (error as Error).message);
+        fixes.push('❌ asciinema installation failed - manual installation required');
+      }
+    }
+  }
+
   // Auto-fix termsvg installation
   if (diagnostics.svgTerm.status === 'warning' && diagnostics.svgTerm.message.includes('not available')) {
     console.log('\n🔧 Attempting to install termsvg...');

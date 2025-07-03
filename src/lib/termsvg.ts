@@ -7,7 +7,7 @@ export function getTermSVGInstallCommand(): string {
   
   switch (currentPlatform) {
     case 'darwin':
-      return 'brew install termsvg  # or use the install script below';
+      return 'curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -';
     case 'linux':
       return 'curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -';
     case 'win32':
@@ -34,8 +34,10 @@ export function getTermSVGInstallInstructions(): string[] {
   switch (currentPlatform) {
     case 'darwin':
       platformSpecific.push(
-        '   # macOS with Homebrew',
-        '   brew install termsvg'
+        '   # macOS with install script',
+        '   curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -',
+        '   # Or with Go:',
+        '   go install github.com/mrmarble/termsvg/cmd/termsvg@latest'
       );
       break;
     case 'linux':
@@ -130,6 +132,8 @@ export async function checkTermSVGAvailability(): Promise<{
   }
 }
 
+
+
 export async function installTermSVGInteractive(): Promise<boolean> {
   const currentPlatform = platform();
   
@@ -138,15 +142,18 @@ export async function installTermSVGInteractive(): Promise<boolean> {
   try {
     switch (currentPlatform) {
       case 'darwin':
-        console.log('📦 Attempting to install via Homebrew...');
+        console.log('📦 Attempting to install via install script...');
         try {
-          execSync('brew --version', { stdio: 'pipe' });
-          execSync('brew install termsvg', { stdio: 'inherit' });
+          execSync('curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -', 
+            { stdio: 'inherit' });
           console.log('✅ termsvg installed successfully!');
           return true;
-        } catch (brewError) {
-          console.log('❌ Homebrew not available or installation failed');
-          console.log('💡 Please install manually using the install script');
+        } catch (installError) {
+          console.log('❌ Install script failed');
+          console.log('💡 Please install manually:');
+          console.log('   # Try Go installation:');
+          console.log('   go install github.com/mrmarble/termsvg/cmd/termsvg@latest');
+          console.log('   # Or download from: https://github.com/MrMarble/termsvg/releases');
           return false;
         }
         
