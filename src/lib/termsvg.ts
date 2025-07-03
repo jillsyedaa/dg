@@ -9,7 +9,7 @@ export function getTermSVGInstallCommand(): string {
   switch (currentPlatform) {
     case 'darwin':
     case 'linux':
-      return 'curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -';
+      return 'curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -';
     case 'win32':
       return 'Download from: https://github.com/MrMarble/termsvg/releases (Windows recording limited)';
     default:
@@ -24,7 +24,7 @@ export function getTermSVGInstallInstructions(): string[] {
     '📦 Install termsvg for SVG generation:',
     '',
     '🚀 Quick install (recommended):',
-    '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -',
+    '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -',
     '',
     '🔧 Alternative methods:'
   ];
@@ -35,7 +35,7 @@ export function getTermSVGInstallInstructions(): string[] {
     case 'darwin':
       platformSpecific.push(
         '   # macOS with install script',
-        '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -',
+        '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -',
         '   # Or with Go:',
         '   go install github.com/mrmarble/termsvg/cmd/termsvg@latest'
       );
@@ -43,7 +43,7 @@ export function getTermSVGInstallInstructions(): string[] {
     case 'linux':
       platformSpecific.push(
         '   # Linux with install script',
-        '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -',
+        '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -',
         '   # Or with Go:',
         '   go install github.com/mrmarble/termsvg/cmd/termsvg@latest'
       );
@@ -145,7 +145,7 @@ export async function installTermSVGInteractive(): Promise<boolean> {
       case 'darwin':
         console.log('📦 Attempting to install via remote script...');
         try {
-          execSync('curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -', 
+          execSync('curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -', 
             { stdio: 'inherit' });
           console.log('✅ termsvg installed successfully!');
           return true;
@@ -161,7 +161,7 @@ export async function installTermSVGInteractive(): Promise<boolean> {
       case 'linux':
         console.log('📦 Attempting to install via remote script...');
         try {
-          execSync('curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg-local.sh | bash -', 
+          execSync('curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -', 
             { stdio: 'inherit' });
           console.log('✅ termsvg installed successfully!');
           return true;
