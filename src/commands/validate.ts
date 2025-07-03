@@ -103,10 +103,12 @@ export async function validateCommand(name?: string, options: { nonInteractive?:
   const results: Array<{ cast: CastConfig; result: ValidationResult }> = [];
 
   for (const cast of selectedCasts) {
+    let valSpinner: ReturnType<typeof p.spinner> | null = null;
+
     if (options.nonInteractive) {
       console.log(`Validating ${cast.title || cast.name}...`);
     } else {
-      const valSpinner = p.spinner();
+      valSpinner = p.spinner();
       valSpinner.start(`Validating ${cast.title || cast.name}...`);
     }
 
@@ -129,8 +131,7 @@ export async function validateCommand(name?: string, options: { nonInteractive?:
       if (options.nonInteractive) {
         console.log(`${icon} ${cast.title || cast.name} - ${result.status}`);
       } else {
-        const valSpinner = p.spinner();
-        valSpinner.stop(`${icon} ${cast.title || cast.name} - ${result.status}`);
+        valSpinner?.stop(`${icon} ${cast.title || cast.name} - ${result.status}`);
       }
 
     } catch (error) {
@@ -138,8 +139,7 @@ export async function validateCommand(name?: string, options: { nonInteractive?:
       if (options.nonInteractive) {
         console.log(`❌ ${cast.title || cast.name} - validation error`);
       } else {
-        const valSpinner = p.spinner();
-        valSpinner.stop(`❌ ${cast.title || cast.name} - validation error`);
+        valSpinner?.stop(`❌ ${cast.title || cast.name} - validation error`);
       }
       results.push({
         cast,
