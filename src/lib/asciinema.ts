@@ -422,4 +422,55 @@ export async function recordDemo(
     
     return false;
   }
+}
+
+export async function installAsciinemaInteractive(): Promise<boolean> {
+  const currentPlatform = process.platform;
+  
+  console.log('\n🔧 asciinema not found. Installing...\n');
+  
+  try {
+    switch (currentPlatform) {
+      case 'darwin':
+        console.log('📦 Attempting to install via Homebrew...');
+        try {
+          execSync('brew --version', { stdio: 'pipe' });
+          execSync('brew install asciinema', { stdio: 'inherit' });
+          console.log('✅ asciinema installed successfully!');
+          return true;
+        } catch (brewError) {
+          console.log('❌ Homebrew not available or installation failed');
+          console.log('💡 Please install manually:');
+          console.log('   brew install asciinema');
+          console.log('   Or visit: https://docs.asciinema.org/manual/cli/installation/');
+          return false;
+        }
+        
+      case 'linux':
+        console.log('📦 Attempting to install via install script...');
+        try {
+          execSync('curl -sL https://raw.githubusercontent.com/asciinema/asciinema/master/install | sh', { stdio: 'inherit' });
+          console.log('✅ asciinema installed successfully!');
+          return true;
+        } catch (installError) {
+          console.log('❌ Install script failed');
+          console.log('💡 Please install manually:');
+          console.log('   Ubuntu/Debian: sudo apt-get install asciinema');
+          console.log('   CentOS/RHEL: sudo yum install asciinema');
+          console.log('   Or visit: https://docs.asciinema.org/manual/cli/installation/');
+          return false;
+        }
+        
+      default:
+        console.log('❌ Automatic installation not supported on this platform');
+        console.log('\n💡 Please install manually:');
+        console.log('   Visit: https://docs.asciinema.org/manual/cli/installation/');
+        return false;
+    }
+  } catch (error) {
+    console.log('❌ Installation failed:', (error as Error).message);
+    console.log('\n💡 Please install manually:');
+    console.log('   Visit: https://docs.asciinema.org/manual/cli/installation/');
+    return false;
+  }
 } 
