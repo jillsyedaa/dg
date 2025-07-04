@@ -1,5 +1,6 @@
 import { execSync } from 'child_process';
 import { platform, arch } from 'os';
+import { existsSync } from 'fs';
 import type { PlatformInfo } from '../types.js';
 
 export function getTermSVGInstallCommand(): string {
@@ -7,9 +8,8 @@ export function getTermSVGInstallCommand(): string {
   
   switch (currentPlatform) {
     case 'darwin':
-      return 'curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -';
     case 'linux':
-      return 'curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -';
+      return 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -';
     case 'win32':
       return 'Download from: https://github.com/MrMarble/termsvg/releases (Windows recording limited)';
     default:
@@ -24,7 +24,7 @@ export function getTermSVGInstallInstructions(): string[] {
     '📦 Install termsvg for SVG generation:',
     '',
     '🚀 Quick install (recommended):',
-    '   curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -',
+    '   curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -',
     '',
     '🔧 Alternative methods:'
   ];
@@ -35,16 +35,17 @@ export function getTermSVGInstallInstructions(): string[] {
     case 'darwin':
       platformSpecific.push(
         '   # macOS with install script',
-        '   curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -',
+        '   curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -',
         '   # Or with Go:',
         '   go install github.com/mrmarble/termsvg/cmd/termsvg@latest'
       );
       break;
     case 'linux':
       platformSpecific.push(
-        '   # Linux with package manager',
-        '   # Ubuntu/Debian: Check for PPA or use install script above',
-        '   # Arch: Check AUR for termsvg'
+        '   # Linux with install script',
+        '   curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -',
+        '   # Or with Go:',
+        '   go install github.com/mrmarble/termsvg/cmd/termsvg@latest'
       );
       break;
     case 'win32':
@@ -78,8 +79,8 @@ export async function checkTermSVGAvailability(): Promise<{
   installCommand?: string;
   installInstructions?: string[];
 }> {
+  // First try system termsvg
   try {
-    // Check if termsvg is available
     const versionOutput = execSync('termsvg --help', { 
       encoding: 'utf8',
       stdio: 'pipe'
@@ -123,6 +124,43 @@ export async function checkTermSVGAvailability(): Promise<{
       supportsRecording
     };
   } catch (error) {
+    // System termsvg not available, try local binary
+    try {
+      const localPath = './bin/termsvg';
+      if (existsSync(localPath)) {
+        const versionOutput = execSync(`${localPath} --help`, { 
+          encoding: 'utf8',
+          stdio: 'pipe'
+        });
+        
+        // Try to get version
+        let version = 'unknown';
+        try {
+          const versionCheck = execSync(`${localPath} --version`, { 
+            encoding: 'utf8',
+            stdio: 'pipe'
+          });
+          version = versionCheck.trim();
+        } catch {
+          const versionMatch = versionOutput.match(/termsvg\s+v?(\d+\.\d+\.\d+)/i);
+          if (versionMatch) {
+            version = versionMatch[1];
+          }
+        }
+        
+        const supportsRecording = versionOutput.includes('rec') && platform() !== 'win32';
+        
+        return {
+          available: true,
+          version,
+          path: localPath,
+          supportsRecording
+        };
+      }
+    } catch (localError) {
+      // Local binary also not available
+    }
+    
     return {
       available: false,
       supportsRecording: false,
@@ -142,14 +180,22 @@ export async function installTermSVGInteractive(): Promise<boolean> {
   try {
     switch (currentPlatform) {
       case 'darwin':
-        console.log('📦 Attempting to install via install script...');
+        console.log('📦 Attempting to install via remote script...');
         try {
-          execSync('curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -', 
-            { stdio: 'inherit' });
+          // Check if this is a global installation
+          const isGlobalInstall = process.env.npm_config_global === 'true' || 
+                                 process.env.npm_config_prefix || 
+                                 process.argv.includes('--global');
+          
+          const installCommand = isGlobalInstall 
+            ? 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | sudo -E bash -'
+            : 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -';
+          
+          execSync(installCommand, { stdio: 'inherit' });
           console.log('✅ termsvg installed successfully!');
           return true;
         } catch (installError) {
-          console.log('❌ Install script failed');
+          console.log('❌ Remote install script failed');
           console.log('💡 Please install manually:');
           console.log('   # Try Go installation:');
           console.log('   go install github.com/mrmarble/termsvg/cmd/termsvg@latest');
@@ -158,15 +204,26 @@ export async function installTermSVGInteractive(): Promise<boolean> {
         }
         
       case 'linux':
-        console.log('📦 Attempting to install via install script...');
+        console.log('📦 Attempting to install via remote script...');
         try {
-          execSync('curl -sL https://raw.githubusercontent.com/MrMarble/termsvg/master/scripts/install-termsvg.sh | sudo -E bash -', 
-            { stdio: 'inherit' });
+          // Check if this is a global installation
+          const isGlobalInstall = process.env.npm_config_global === 'true' || 
+                                 process.env.npm_config_prefix || 
+                                 process.argv.includes('--global');
+          
+          const installCommand = isGlobalInstall 
+            ? 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | sudo -E bash -'
+            : 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -';
+          
+          execSync(installCommand, { stdio: 'inherit' });
           console.log('✅ termsvg installed successfully!');
           return true;
         } catch (installError) {
-          console.log('❌ Install script failed');
-          console.log('💡 Please install manually or check your internet connection');
+          console.log('❌ Remote install script failed');
+          console.log('💡 Please install manually:');
+          console.log('   # Try Go installation:');
+          console.log('   go install github.com/mrmarble/termsvg/cmd/termsvg@latest');
+          console.log('   # Or download from: https://github.com/MrMarble/termsvg/releases');
           return false;
         }
         
@@ -193,9 +250,20 @@ export async function exportSVG(
 ): Promise<boolean> {
   const { minify = true } = options;
   
+  // Get the appropriate termsvg path
+  const availability = await checkTermSVGAvailability();
+  if (!availability.available) {
+    console.error('termsvg not available');
+    console.log('💡 Install termsvg:');
+    getTermSVGInstallInstructions().forEach(line => console.log('   ' + line));
+    return false;
+  }
+  
+  const termsvgPath = availability.path || 'termsvg';
+  
   try {
     const args = [
-      'termsvg',
+      `"${termsvgPath}"`,
       'export',
       `"${castPath}"`,
       '--output', `"${outputPath}"`
@@ -225,7 +293,7 @@ export async function exportSVG(
       console.log('💡 Check file permissions or try running with appropriate permissions.');
     } else {
       console.log('💡 Check that termsvg is working properly.');
-      console.log('   Test: termsvg --help');
+      console.log(`   Test: ${termsvgPath} --help`);
     }
     
     return false;
