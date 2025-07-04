@@ -9,7 +9,7 @@ export function getTermSVGInstallCommand(): string {
   switch (currentPlatform) {
     case 'darwin':
     case 'linux':
-      return 'curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -';
+      return 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -';
     case 'win32':
       return 'Download from: https://github.com/MrMarble/termsvg/releases (Windows recording limited)';
     default:
@@ -24,7 +24,7 @@ export function getTermSVGInstallInstructions(): string[] {
     '📦 Install termsvg for SVG generation:',
     '',
     '🚀 Quick install (recommended):',
-    '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -',
+    '   curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -',
     '',
     '🔧 Alternative methods:'
   ];
@@ -35,7 +35,7 @@ export function getTermSVGInstallInstructions(): string[] {
     case 'darwin':
       platformSpecific.push(
         '   # macOS with install script',
-        '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -',
+        '   curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -',
         '   # Or with Go:',
         '   go install github.com/mrmarble/termsvg/cmd/termsvg@latest'
       );
@@ -43,7 +43,7 @@ export function getTermSVGInstallInstructions(): string[] {
     case 'linux':
       platformSpecific.push(
         '   # Linux with install script',
-        '   curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -',
+        '   curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -',
         '   # Or with Go:',
         '   go install github.com/mrmarble/termsvg/cmd/termsvg@latest'
       );
@@ -182,8 +182,16 @@ export async function installTermSVGInteractive(): Promise<boolean> {
       case 'darwin':
         console.log('📦 Attempting to install via remote script...');
         try {
-          execSync('curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -', 
-            { stdio: 'inherit' });
+          // Check if this is a global installation
+          const isGlobalInstall = process.env.npm_config_global === 'true' || 
+                                 process.env.npm_config_prefix || 
+                                 process.argv.includes('--global');
+          
+          const installCommand = isGlobalInstall 
+            ? 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | sudo -E bash -'
+            : 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -';
+          
+          execSync(installCommand, { stdio: 'inherit' });
           console.log('✅ termsvg installed successfully!');
           return true;
         } catch (installError) {
@@ -198,8 +206,16 @@ export async function installTermSVGInteractive(): Promise<boolean> {
       case 'linux':
         console.log('📦 Attempting to install via remote script...');
         try {
-          execSync('curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/master/scripts/install-termsvg.sh | bash -', 
-            { stdio: 'inherit' });
+          // Check if this is a global installation
+          const isGlobalInstall = process.env.npm_config_global === 'true' || 
+                                 process.env.npm_config_prefix || 
+                                 process.argv.includes('--global');
+          
+          const installCommand = isGlobalInstall 
+            ? 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | sudo -E bash -'
+            : 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-termsvg.sh | bash -';
+          
+          execSync(installCommand, { stdio: 'inherit' });
           console.log('✅ termsvg installed successfully!');
           return true;
         } catch (installError) {
