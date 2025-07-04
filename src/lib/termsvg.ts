@@ -126,7 +126,7 @@ export async function checkTermSVGAvailability(): Promise<{
   } catch (error) {
     // System termsvg not available, try local binary
     try {
-      const localPath = './bin/termsvg';
+      const localPath = './.dg/bin/termsvg';
       if (existsSync(localPath)) {
         const versionOutput = execSync(`${localPath} --help`, { 
           encoding: 'utf8',
