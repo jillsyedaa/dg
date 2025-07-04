@@ -125,14 +125,14 @@ export async function checkTermSVGAvailability(): Promise<{
       supportsRecording
     };
   } catch (error) {
-          // System termsvg not available, try local binary
-      try {
-        const localPath = join(process.cwd(), '.dg', 'bin', 'termsvg');
-        if (existsSync(localPath)) {
-          const versionOutput = execSync(`${localPath} --help`, { 
-            encoding: 'utf8',
-            stdio: 'pipe'
-          });
+    // System termsvg not available, try local binary
+    try {
+      const localPath = join(process.cwd(), '.dg', 'bin', 'termsvg');
+      if (existsSync(localPath)) {
+        const versionOutput = execSync(`${localPath} --help`, { 
+          encoding: 'utf8',
+          stdio: 'pipe'
+        });
         
         // Try to get version
         let version = 'unknown';
