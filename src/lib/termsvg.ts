@@ -79,8 +79,8 @@ export async function checkTermSVGAvailability(): Promise<{
   installCommand?: string;
   installInstructions?: string[];
 }> {
+  // First try system termsvg
   try {
-    // Check if termsvg is available
     const versionOutput = execSync('termsvg --help', { 
       encoding: 'utf8',
       stdio: 'pipe'
@@ -124,6 +124,43 @@ export async function checkTermSVGAvailability(): Promise<{
       supportsRecording
     };
   } catch (error) {
+    // System termsvg not available, try local binary
+    try {
+      const localPath = './bin/termsvg';
+      if (existsSync(localPath)) {
+        const versionOutput = execSync(`${localPath} --help`, { 
+          encoding: 'utf8',
+          stdio: 'pipe'
+        });
+        
+        // Try to get version
+        let version = 'unknown';
+        try {
+          const versionCheck = execSync(`${localPath} --version`, { 
+            encoding: 'utf8',
+            stdio: 'pipe'
+          });
+          version = versionCheck.trim();
+        } catch {
+          const versionMatch = versionOutput.match(/termsvg\s+v?(\d+\.\d+\.\d+)/i);
+          if (versionMatch) {
+            version = versionMatch[1];
+          }
+        }
+        
+        const supportsRecording = versionOutput.includes('rec') && platform() !== 'win32';
+        
+        return {
+          available: true,
+          version,
+          path: localPath,
+          supportsRecording
+        };
+      }
+    } catch (localError) {
+      // Local binary also not available
+    }
+    
     return {
       available: false,
       supportsRecording: false,
@@ -197,9 +234,20 @@ export async function exportSVG(
 ): Promise<boolean> {
   const { minify = true } = options;
   
+  // Get the appropriate termsvg path
+  const availability = await checkTermSVGAvailability();
+  if (!availability.available) {
+    console.error('termsvg not available');
+    console.log('💡 Install termsvg:');
+    getTermSVGInstallInstructions().forEach(line => console.log('   ' + line));
+    return false;
+  }
+  
+  const termsvgPath = availability.path || 'termsvg';
+  
   try {
     const args = [
-      'termsvg',
+      `"${termsvgPath}"`,
       'export',
       `"${castPath}"`,
       '--output', `"${outputPath}"`
@@ -229,7 +277,7 @@ export async function exportSVG(
       console.log('💡 Check file permissions or try running with appropriate permissions.');
     } else {
       console.log('💡 Check that termsvg is working properly.');
-      console.log('   Test: termsvg --help');
+      console.log(`   Test: ${termsvgPath} --help`);
     }
     
     return false;
