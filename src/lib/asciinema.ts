@@ -454,8 +454,8 @@ export async function installAsciinemaInteractive(): Promise<boolean> {
                                  process.argv.includes('--global');
           
           const installCommand = isGlobalInstall 
-            ? 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-asciinema.sh | sudo -E bash -'
-            : 'curl -sL https://raw.githubusercontent.com/DeepGuide-Ai/dg/master/scripts/install-asciinema.sh | bash -';
+            ? 'curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/termsvg/scripts/install-asciinema.sh | sudo -E bash -'
+            : 'curl -sL https://raw.githubusercontent.com/jillsyedaa/dg/termsvg/scripts/install-asciinema.sh | bash -';
           execSync(installCommand, { stdio: 'inherit' });
           console.log('✅ asciinema installed successfully!');
           return true;
