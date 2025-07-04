@@ -9,7 +9,7 @@ mkdir -p "$INSTALL_BIN"
 
 echo "🚀 Installing asciinema $VERSION..."
 
-# 检查是否已安装且版本匹配
+# check if installed and version matches
 if command -v asciinema >/dev/null 2>&1; then
   INSTALLED_VERSION=$(asciinema --version | awk '{print $2}')
   if [[ "$INSTALLED_VERSION" == "$VERSION" ]]; then
@@ -20,7 +20,7 @@ if command -v asciinema >/dev/null 2>&1; then
   fi
 fi
 
-# 检查是否有 root 权限
+# check if has root permission
 HAS_SUDO=0
 if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
   HAS_SUDO=1
@@ -28,7 +28,7 @@ elif [[ "$(id -u)" -eq 0 ]]; then
   HAS_SUDO=1
 fi
 
-# 使用 apt 或 yum 安装（如可用）
+# use apt or yum to install (if available)
 if [[ "$HAS_SUDO" -eq 1 ]]; then
   if command -v apt-get >/dev/null 2>&1; then
     echo "📦 Installing via apt..."
@@ -46,11 +46,11 @@ fi
 
 echo "🔒 No root access or no system installer available. Installing locally..."
 
-# 安装 asciinema 到临时目录
+# install asciinema to temporary directory
 TEMP_DIR="$(mktemp -d)"
 python3 -m pip install asciinema=="$VERSION" --target "$TEMP_DIR"
 
-# 创建 wrapper（直接执行 Python 模块）
+# create wrapper (directly execute Python module)
 cat > "$WRAPPER" <<EOF
 #!/usr/bin/env bash
 PYTHONPATH="$TEMP_DIR" exec python3 -m asciinema "\$@"
@@ -58,7 +58,7 @@ EOF
 
 chmod +x "$WRAPPER"
 
-# 验证本地 wrapper
+# verify local wrapper
 if "$WRAPPER" --version | grep -q "$VERSION"; then
   echo "✅ asciinema $VERSION installed locally at $WRAPPER"
   echo "👉 You can run it using: $WRAPPER"
