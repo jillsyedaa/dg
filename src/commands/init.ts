@@ -10,6 +10,7 @@ import {
 } from '../lib/config.js';
 import { join } from 'path';
 import { ensureDirectoryExists } from '../lib/file.js';
+import { checkTermSVGAvailability, installTermSVGInteractive } from '../lib/termsvg.js';
 
 const GITHUB_WORKFLOW = `name: DeepGuide
 
@@ -82,25 +83,25 @@ export async function initCommand(): Promise<void> {
   spinner.start('Checking dependencies...');
   
   // Check asciinema
-  const asciinemaCheck = await checkAsciinemaAvailability();
-  if (asciinemaCheck.available) {
-    spinner.stop(`✅ Using ${asciinemaCheck.source} asciinema v${asciinemaCheck.version}`);
+  const termsvgCheck = await checkTermSVGAvailability();
+  if (termsvgCheck.available) {
+    spinner.stop(`✅ Using termsvg v${termsvgCheck.version}`);
   } else {
-    spinner.stop('⚠️  asciinema not found');
-    
-    const shouldDownload = await p.confirm({
-      message: 'Would you like me to download asciinema for you?',
+    spinner.stop('⚠️  termsvg not found');
+
+    const shouldInstall = await p.confirm({
+      message: 'Would you like me to install termsvg for you?',
       initialValue: true
     });
     
-    if (shouldDownload) {
-      spinner.start('Downloading asciinema...');
-      const binaryPath = await downloadAsciinema();
+    if (shouldInstall) {
+      spinner.start('Installing termsvg...');
+      const installed = await installTermSVGInteractive();
       
-      if (binaryPath) {
-        spinner.stop('✅ Downloaded asciinema successfully');
+      if (installed) {
+        spinner.stop('✅ Installed termsvg successfully');
       } else {
-        spinner.stop('❌ Failed to download asciinema');
+        spinner.stop('❌ Failed to install termsvg');
         const shouldContinue = await p.confirm({
           message: 'Continue anyway? (You can install it later)',
           initialValue: true
