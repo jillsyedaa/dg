@@ -50,6 +50,13 @@ function tryRebuildNodePtyManually() {
 
 async function install() {
   try {
+    // check if node-pty is installed
+    const ok = tryLoadNodePty();
+    if (!ok) {
+      // if module load failed, try to rebuild node-pty manually
+      tryRebuildNodePtyManually();
+    }
+
     // Check if dist/index.js exists (built version)
     const distPath = join(process.cwd(), 'dist', 'index.js');
     
@@ -57,12 +64,6 @@ async function install() {
       console.log('⚠️ Built files not found. This is normal during development.');
       console.log('Run `npm run build` to build the project.');
       return;
-    }
-
-    const ok = tryLoadNodePty();
-    if (!ok) {
-      // if module load failed, try to rebuild node-pty manually
-      tryRebuildNodePtyManually();
     }
 
     console.log('✓ DeepGuide CLI installed successfully!');
