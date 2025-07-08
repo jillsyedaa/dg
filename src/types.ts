@@ -57,7 +57,7 @@ export interface DiagnosticResult {
 }
 
 export interface EnvironmentDiagnostics {
-  asciinema: DiagnosticResult;
+  asciinema?: DiagnosticResult;
   svgTerm: DiagnosticResult;
   storage: DiagnosticResult;
   platform: DiagnosticResult;

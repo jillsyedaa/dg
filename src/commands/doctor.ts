@@ -13,7 +13,8 @@ export async function doctorCommand(options?: any): Promise<void> {
   p.intro('🩺 System Diagnostics');
   
   const diagnostics: EnvironmentDiagnostics = {
-    asciinema: await checkAsciinema(),
+    // ignore asciinema for now
+    // asciinema: await checkAsciinema(),
     svgTerm: await checkTermSVG(),
     storage: await checkStorage(),
     platform: await checkPlatform()
@@ -88,7 +89,7 @@ async function checkTermSVG(): Promise<DiagnosticResult> {
     };
   } else {
     return {
-      status: 'warning',
+      status: 'error',
       message: 'termsvg not available',
       details: availability.installCommand || 'Install from: https://github.com/MrMarble/termsvg'
     };
@@ -215,7 +216,7 @@ async function autoFix(diagnostics: EnvironmentDiagnostics): Promise<void> {
   const fixes: string[] = [];
   
   // Auto-fix asciinema installation
-  if (diagnostics.asciinema.status === 'error') {
+  if (diagnostics?.asciinema?.status === 'error') {
     console.log('\n🔧 Attempting to install asciinema...');
     
     // Try system package manager first
@@ -240,7 +241,7 @@ async function autoFix(diagnostics: EnvironmentDiagnostics): Promise<void> {
   }
 
   // Auto-fix termsvg installation
-  if (diagnostics.svgTerm.status === 'warning' && diagnostics.svgTerm.message.includes('not available')) {
+  if (diagnostics.svgTerm.status === 'error' && diagnostics.svgTerm.message.includes('not available')) {
     console.log('\n🔧 Attempting to install termsvg...');
     const installed = await installTermSVGInteractive();
     if (installed) {
