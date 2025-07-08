@@ -8,9 +8,9 @@ import {
   updateCast
 } from '../lib/config.js';
 import {
-  checkAsciinemaAvailability,
+  checkTermSVGAvailability,
   recordInteractiveDemo
-} from '../lib/asciinema.js';
+} from '../lib/termsvg.js';
 import { detectInteractiveElements } from '../lib/interactive-detection.js';
 import { generateSVG } from '../lib/svg-generation.js';
 import { initLogger, dgLogger as logger } from '../lib/logger.js';
@@ -50,15 +50,15 @@ export async function captureCommand(options: {
     return;
   }
 
-  const asciinemaCheck = await checkAsciinemaAvailability();
+  const termsvgCheck = await checkTermSVGAvailability();
 
-  if (!asciinemaCheck.available) {
-    logger.error('asciinema not available', { version: asciinemaCheck.version });
-    p.cancel('asciinema is required for recording. Install it first or run with DG_GPL_OFF=0.');
+  if (!termsvgCheck.available) {
+    logger.error('termsvg not available', { version: termsvgCheck.version });
+    p.cancel('termsvgCheck is required for recording. Install it first');
     return;
   }
 
-  logger.debug('asciinema check passed', { version: asciinemaCheck.version });
+  logger.debug('termsvg check passed', { version: termsvgCheck.version });
 
   // Only ask for title
   const title = await p.text({
@@ -110,7 +110,7 @@ export async function captureCommand(options: {
 
   if (!recordSuccess) {
     logger.error('Recording failed');
-    p.cancel('Recording failed. Check that asciinema is working properly.');
+    p.cancel('Recording failed. Check that termsvg is working properly.');
     return;
   }
 
