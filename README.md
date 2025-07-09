@@ -22,6 +22,9 @@ Transform your CLI documentation from static code blocks or heavy GIF/Video into
 # Install globally
 npm install -g @deepguide-ai/dg
 
+# Install dependencies (e.g., termsvg)
+sudo dg doctor
+
 # Or run without installing
 npx @deepguide-ai/dg init
 ```
