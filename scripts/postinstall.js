@@ -100,7 +100,13 @@ async function install() {
     // Check and install termsvg
     const termsvgOk = checkTermSVG();
     if (!termsvgOk) {
-      installTermSVG();
+      if (process.env.DG_GPL_OFF === '1') {
+        console.log('⚠️ GPL mode disabled');
+        console.log('⚠️ termsvg not available');
+        console.log('⚠️ Install termsvg manually or remove DG_GPL_OFF=1');
+      } else {
+        installTermSVG();
+      }
     }
 
     // Check if dist/index.js exists (built version)
